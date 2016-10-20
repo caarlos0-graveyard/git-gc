@@ -1,0 +1,12 @@
+#!/bin/bash
+folder="$1"
+test -z "$folder" && folder="."
+
+find "$folder" -type d -name '.git' | while read -r repo; do
+  repo="${repo/.git/}"
+  echo "Size before: $(du -hs $repo)"
+  (cd "$repo"; git gc --aggressive --quiet)
+  echo "Size after: $(du -hs $repo)"
+  echo ""
+done
+
