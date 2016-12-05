@@ -1,11 +1,25 @@
 #!/bin/bash
-folder="$1"
-test -z "$folder" && folder="."
-find "$folder" -type d -name '.git' | while read -r repo; do
-  repo="${repo/.git/}"
-  echo "Size before: $(du -hs $repo)"
-  (cd "$repo"; git gc --aggressive --quiet)
-  echo "Size after: $(du -hs $repo)"
-  echo ""
+
+sizeof() {
+  local folder="$1"
+  du -hs "$folder" | cut -f1
+}
+
+do_gc() {
+  local repo="${1/.git/}"
+  local -r before="$(sizeof $repo)"
+  (cd "$repo" && git gc --aggressive --quiet)
+  test -n "$DEBUG" && echo "$repo $before $(sizeof $repo)"
+}
+
+FOLDER="$1"
+test -z "$FOLDER" && FOLDER="."
+TOTAL_BEFORE="$(sizeof $FOLDER)"
+
+find "$FOLDER" -type d -name '.git' | while read -r repo; do
+  do_gc "$repo"
 done
 
+echo ""
+echo ""
+echo "$FOLDER $TOTAL_BEFORE $(sizeof $FOLDER)"
