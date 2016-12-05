@@ -6,9 +6,10 @@ sizeof() {
 }
 
 do_gc() {
-  local repo="${1/.git/}"
+  local repo="$1"
   local -r before="$(sizeof $repo)"
-  (cd "$repo" && git gc --aggressive --quiet)
+  git --git-dir="$repo" reflog expire --all --expire=now
+  git --git-dir="$repo" gc --aggressive --prune=now --quiet
   test -n "$DEBUG" && echo "$repo $before $(sizeof $repo)"
 }
 
@@ -20,6 +21,4 @@ find "$FOLDER" -type d -name '.git' | while read -r repo; do
   do_gc "$repo"
 done
 
-echo ""
-echo ""
 echo "$FOLDER $TOTAL_BEFORE $(sizeof $FOLDER)"
