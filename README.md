@@ -1,4 +1,4 @@
-# git-gc
+# git-gc [![SayThanks.io](https://img.shields.io/badge/SayThanks.io-%E2%98%BC-1EAEDB.svg?style=flat-square)](https://saythanks.io/to/caarlos0)
 
 > A simple bash script to reduce your local repos' size.
 
